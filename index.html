@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Focus Forward™ — Cognitive Performance Training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,700;12..96,800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #050607;
+    --dark: #0c0e12;
+    --mid: #12151c;
+    --panel: #181c26;
+    --border: rgba(255,255,255,0.07);
+    --white: #f2f0eb;
+    --cream: #e8e4d8;
+    --gold: #c9a84c;
+    --gold-light: #e8c96b;
+    --cyan: #4ecdc4;
+    --red-accent: #e05a44;
+    --text-muted: rgba(242,240,235,0.45);
+    --text-mid: rgba(242,240,235,0.72);
+    --font-display: 'Cormorant Garamond', serif;
+    --font-body: 'Bricolage Grotesque', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s, width 0.25s, height 0.25s, background 0.25s;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(201,168,76,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform 0.18s ease, width 0.3s, height 0.3s;
+  }
+  body:hover .cursor { opacity: 1; }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.35;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 48px;
+    border-bottom: 1px solid transparent;
+    transition: background 0.4s, border-color 0.4s, padding 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(5,6,7,0.92);
+    border-color: var(--border);
+    padding: 16px 48px;
+    backdrop-filter: blur(20px);
+  }
+  .nav-logo {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-cta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    padding: 10px 22px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+    cursor: none;
+  }
+  .nav-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 70% 40%, rgba(201,168,76,0.06) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 50% at 20% 80%, rgba(78,205,196,0.04) 0%, transparent 60%),
+                radial-gradient(ellipse 100% 80% at 50% 0%, rgba(12,14,18,1) 0%, var(--black) 100%);
+  }
+  .hero-grid-lines {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 20%, transparent 80%);
+  }
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+  }
+  .hero-headline {
+    font-family: var(--font-display);
+    font-size: clamp(60px, 9vw, 130px);
+    font-weight: 300;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    max-width: 900px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.9s 0.4s forwards;
+  }
+  .hero-headline em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-sub {
+    font-size: 17px;
+    color: var(--text-mid);
+    max-width: 500px;
+    margin-top: 32px;
+    line-height: 1.65;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.9s 0.6s forwards;
+  }
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-top: 48px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.9s 0.8s forwards;
+  }
+  .btn-primary {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    padding: 16px 32px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    cursor: none;
+  }
+  .btn-primary:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(201,168,76,0.25);
+  }
+  .btn-ghost {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: color 0.2s;
+    cursor: none;
+  }
+  .btn-ghost:hover { color: var(--white); }
+  .btn-ghost::after {
+    content: '→';
+    transition: transform 0.2s;
+  }
+  .btn-ghost:hover::after { transform: translateX(4px); }
+
+  .hero-stats {
+    position: absolute;
+    right: 48px;
+    bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    opacity: 0;
+    animation: fadeIn 1s 1.2s forwards;
+  }
+  .stat {
+    text-align: right;
+  }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 38px;
+    font-weight: 400;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* MARQUEE */
+  .marquee-wrap {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    padding: 18px 0;
+    background: var(--dark);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 0;
+    animation: marquee 30s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-item {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+  .marquee-item::after {
+    content: '◆';
+    color: var(--gold);
+    font-size: 8px;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* SECTION BASE */
+  section {
+    padding: 120px 48px;
+    position: relative;
+  }
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 1px;
+    background: var(--gold);
+  }
+  h2.section-title {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 5.5vw, 72px);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--white);
+    max-width: 800px;
+  }
+  h2.section-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  /* PROBLEM SECTION */
+  #problem {
+    background: var(--dark);
+  }
+  .problem-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-top: 72px;
+    align-items: start;
+  }
+  .problem-text p {
+    color: var(--text-mid);
+    font-size: 17px;
+    line-height: 1.75;
+    margin-top: 24px;
+  }
+  .problem-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+  }
+  .problem-card {
+    background: var(--mid);
+    padding: 32px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .problem-card:hover { background: var(--panel); }
+  .problem-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--gold);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.35s ease;
+  }
+  .problem-card:hover::before { transform: scaleY(1); }
+  .problem-card-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .problem-card h3 {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+  .problem-card p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* SOLUTION */
+  #solution {
+    background: var(--black);
+  }
+  .solution-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-bottom: 80px;
+    align-items: end;
+  }
+  .solution-desc {
+    color: var(--text-mid);
+    font-size: 16px;
+    line-height: 1.75;
+    align-self: center;
+  }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+  .step {
+    background: var(--dark);
+    padding: 48px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .step:hover { background: var(--mid); }
+  .step-icon {
+    font-size: 32px;
+    margin-bottom: 24px;
+    display: block;
+  }
+  .step-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .step h3 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+  .step p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+  .step-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+  }
+  .step:hover .step-bar { transform: scaleX(1); }
+
+  /* ABOUT */
+  #about {
+    background: var(--dark);
+  }
+  .about-layout {
+    display: grid;
+    grid-template-columns: 5fr 4fr;
+    gap: 80px;
+    margin-top: 64px;
+    align-items: start;
+  }
+  .about-body {
+    color: var(--text-mid);
+    font-size: 17px;
+    line-height: 1.8;
+  }
+  .about-body p + p { margin-top: 20px; }
+  .about-body strong { color: var(--white); font-weight: 500; }
+  .about-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+  }
+  .credential {
+    background: var(--mid);
+    padding: 24px 28px;
+  }
+  .credential-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .credential-val {
+    font-size: 14px;
+    color: var(--white);
+    font-weight: 400;
+  }
+
+  /* PROGRAMS */
+  #programs {
+    background: var(--black);
+  }
+  .programs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 72px;
+  }
+  .program-card {
+    background: var(--dark);
+    border: 1px solid var(--border);
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+    cursor: none;
+  }
+  .program-card:hover {
+    border-color: rgba(201,168,76,0.4);
+    transform: translateY(-6px);
+  }
+  .program-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(201,168,76,0.05) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .program-card:hover::after { opacity: 1; }
+  .program-badge {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    padding: 5px 12px;
+    display: inline-block;
+    margin-bottom: 32px;
+  }
+  .program-card h3 {
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .program-audience {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+  .program-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin-bottom: 28px;
+  }
+  .program-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .program-features li {
+    font-size: 13px;
+    color: var(--text-mid);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .program-features li::before {
+    content: '→';
+    color: var(--gold);
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  /* AUDIENCE SPLIT */
+  #audience {
+    background: var(--dark);
+    padding: 0;
+  }
+  .audience-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .audience-panel {
+    padding: 96px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .audience-panel.schools { border-right: 1px solid var(--border); }
+  .audience-panel h2 {
+    font-family: var(--font-display);
+    font-size: 44px;
+    font-weight: 300;
+    color: var(--white);
+    margin: 24px 0 16px;
+  }
+  .audience-panel p {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+  .audience-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .audience-list li {
+    font-size: 14px;
+    color: var(--text-mid);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .audience-list li::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .audience-bg {
+    position: absolute;
+    right: -60px; bottom: -60px;
+    font-family: var(--font-display);
+    font-size: 240px;
+    font-weight: 300;
+    color: rgba(201,168,76,0.04);
+    line-height: 1;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* CONTACT */
+  #contact {
+    background: var(--black);
+    padding: 120px 48px;
+  }
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 5fr 4fr;
+    gap: 80px;
+    margin-top: 64px;
+    align-items: start;
+  }
+  .contact-intro {
+    color: var(--text-mid);
+    font-size: 17px;
+    line-height: 1.8;
+  }
+  .contact-intro p + p { margin-top: 20px; }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  input, select, textarea {
+    width: 100%;
+    background: var(--dark);
+    border: 1px solid var(--border);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 300;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    -webkit-appearance: none;
+    cursor: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: rgba(201,168,76,0.5);
+    background: var(--mid);
+  }
+  textarea { resize: vertical; min-height: 120px; }
+  select option { background: var(--mid); }
+  .form-submit {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    border: none;
+    padding: 18px 36px;
+    cursor: none;
+    margin-top: 8px;
+    align-self: flex-start;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .form-submit:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .form-success {
+    display: none;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--cyan);
+    padding: 16px;
+    border: 1px solid rgba(78,205,196,0.3);
+    margin-top: 16px;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--dark);
+  }
+  .footer-logo {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .footer-copy {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+  }
+  .footer-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+  .footer-links a {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--white); }
+
+  /* FADE IN ANIMATIONS */
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0 48px;
+  }
+
+  /* PULL QUOTE */
+  .pull-quote {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.5vw, 48px);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.3;
+    padding: 80px 48px;
+    text-align: center;
+    position: relative;
+    background: var(--mid);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .pull-quote::before {
+    content: '"';
+    font-size: 160px;
+    position: absolute;
+    top: -30px; left: 40px;
+    color: rgba(201,168,76,0.12);
+    font-family: var(--font-display);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .pull-quote cite {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-style: normal;
+    margin-top: 20px;
+  }
+
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    nav.scrolled { padding: 14px 24px; }
+    .nav-links { display: none; }
+    section { padding: 80px 24px; }
+    #hero { padding: 0 24px 60px; }
+    .hero-stats { display: none; }
+    .problem-layout, .about-layout, .contact-layout, .solution-header { grid-template-columns: 1fr; gap: 48px; }
+    .steps, .programs-grid { grid-template-columns: 1fr; }
+    .audience-split { grid-template-columns: 1fr; }
+    .audience-panel.schools { border-right: none; border-bottom: 1px solid var(--border); }
+    footer { flex-direction: column; gap: 20px; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+    .form-row { grid-template-columns: 1fr; }
+    .divider { margin: 0 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#hero" class="nav-logo">Focus Forward™</a>
+  <ul class="nav-links">
+    <li><a href="#problem">The Problem</a></li>
+    <li><a href="#solution">Method</a></li>
+    <li><a href="#programs">Programs</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Book a Pilot</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-lines"></div>
+  <div class="hero-eyebrow">Neuroscience-Backed Cognitive Training</div>
+  <h1 class="hero-headline">Attention<br>is the <em>new</em><br>intelligence.</h1>
+  <p class="hero-sub">In a world engineered to steal your focus, we train minds to reclaim it — with precision habit systems grounded in behavioural neuroscience.</p>
+  <div class="hero-actions">
+    <a href="#contact" class="btn-primary">Book a Pilot Program</a>
+    <a href="#solution" class="btn-ghost">Explore the Method</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">20+</div>
+      <div class="stat-label">Years of Research</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Life-Stage Editions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4wk</div>
+      <div class="stat-label">School Curriculum</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">Attention Training</span>
+    <span class="marquee-item">Habit Engineering</span>
+    <span class="marquee-item">Cognitive Stamina</span>
+    <span class="marquee-item">Dopamine Regulation</span>
+    <span class="marquee-item">Burnout Prevention</span>
+    <span class="marquee-item">Deep Focus Architecture</span>
+    <span class="marquee-item">Digital Discipline</span>
+    <span class="marquee-item">Performance Sustainability</span>
+    <span class="marquee-item">Attention Training</span>
+    <span class="marquee-item">Habit Engineering</span>
+    <span class="marquee-item">Cognitive Stamina</span>
+    <span class="marquee-item">Dopamine Regulation</span>
+    <span class="marquee-item">Burnout Prevention</span>
+    <span class="marquee-item">Deep Focus Architecture</span>
+    <span class="marquee-item">Digital Discipline</span>
+    <span class="marquee-item">Performance Sustainability</span>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-label reveal">01 — The Crisis</div>
+  <div class="problem-layout">
+    <div class="problem-text">
+      <h2 class="section-title reveal">We are living through an <em>attention collapse.</em></h2>
+      <p class="reveal reveal-delay-1">The average student today cannot sustain focused thought for more than 20 minutes. This is not a willpower failure — it is a neurological consequence of systems designed to exploit the brain's reward pathways at industrial scale.</p>
+      <p class="reveal reveal-delay-2">Social media, streaming, and notification architecture have fundamentally altered how dopamine is distributed in developing minds. The result: eroded concentration, academic burnout, and a generation increasingly unable to perform the kind of sustained cognitive work that determines life outcomes.</p>
+      <p class="reveal reveal-delay-2">This is a structural problem requiring a structural solution.</p>
+    </div>
+    <div class="problem-cards reveal reveal-delay-1">
+      <div class="problem-card">
+        <div class="problem-card-num">Problem 01</div>
+        <h3>Attention Collapse</h3>
+        <p>Students struggle to sustain concentration for a single class period. The ability to focus — the most fundamental academic skill — is eroding in real time.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-card-num">Problem 02</div>
+        <h3>Dopamine Hijacking</h3>
+        <p>Apps engineered to maximise engagement permanently rewire the brain's motivation and reward systems, making deep work feel impossible and shallow stimulation feel necessary.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-card-num">Problem 03</div>
+        <h3>Academic Burnout</h3>
+        <p>High-effort, low-retention learning cycles exhaust students without producing genuine understanding — breeding anxiety, disengagement, and a collapse in academic confidence.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="pull-quote">
+  The brain that cannot sustain attention cannot sustain learning. And the brain that cannot learn cannot grow.
+  <cite>— Dr. Sunil Bandi, Founder, Focus Forward™</cite>
+</div>
+
+<!-- SOLUTION -->
+<section id="solution">
+  <div class="solution-header">
+    <div>
+      <div class="section-label reveal">02 — The Method</div>
+      <h2 class="section-title reveal">A cognitive operating <em>system</em> — not a motivational programme.</h2>
+    </div>
+    <p class="solution-desc reveal">Focus Forward is a structured attention training protocol. It does not rely on willpower or inspiration. It builds reliable cognitive architecture through behavioural conditioning, environment design, and neuroscience-backed habit systems — the same principles used in elite performance psychology.</p>
+  </div>
+  <div class="steps">
+    <div class="step reveal">
+      <span class="step-icon">◉</span>
+      <div class="step-num">Step 01</div>
+      <h3>Train</h3>
+      <p>Daily guided focus drills calibrated to your current attention baseline. Systematic progressive overload for the mind — the same principle that builds physical strength, applied to cognitive endurance.</p>
+      <div class="step-bar"></div>
+    </div>
+    <div class="step reveal reveal-delay-1">
+      <span class="step-icon">⟳</span>
+      <div class="step-num">Step 02</div>
+      <h3>Rewire</h3>
+      <p>Habit-loop modification targeting the cue-routine-reward cycle at the neurological level. Replace attention-depleting patterns with compounding focus behaviours that become automatic over time.</p>
+      <div class="step-bar"></div>
+    </div>
+    <div class="step reveal reveal-delay-2">
+      <span class="step-icon">◈</span>
+      <div class="step-num">Step 03</div>
+      <h3>Sustain</h3>
+      <p>Long-term discipline architecture that survives the end of the programme. Sleep optimisation, environment design, and energy regulation systems that make high performance the path of least resistance.</p>
+      <div class="step-bar"></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROGRAMS -->
+<section id="programs">
+  <div class="section-label reveal">03 — The Programmes</div>
+  <h2 class="section-title reveal">A complete system across every <em>life stage.</em></h2>
+  <div class="programs-grid">
+    <div class="program-card reveal">
+      <div class="program-badge">Grades 6–12</div>
+      <h3>School Edition</h3>
+      <div class="program-audience">Foundational Cognitive Literacy</div>
+      <p class="program-desc">A 4-week teacher-facilitated curriculum that builds preventive mental discipline before attention deficits become entrenched. Designed for schools that take cognitive wellbeing seriously.</p>
+      <ul class="program-features">
+        <li>Understanding the brain & dopamine reward pathways</li>
+        <li>Habit engineering & digital boundary design</li>
+        <li>Sleep science & emotional regulation</li>
+        <li>Structured workbooks & in-class exercises</li>
+        <li>Measurable attention metrics for educators</li>
+      </ul>
+    </div>
+    <div class="program-card reveal reveal-delay-1">
+      <div class="program-badge">Universities</div>
+      <h3>Higher Education Edition</h3>
+      <div class="program-audience">Self-Directed Performance</div>
+      <p class="program-desc">For students navigating the transition from structured school environments to autonomous university life — where distraction has no external limits and performance depends entirely on internal discipline.</p>
+      <ul class="program-features">
+        <li>Maintaining focus under cognitive autonomy</li>
+        <li>Burnout prevention & sleep optimisation</li>
+        <li>Identifying and breaking digital addiction patterns</li>
+        <li>Identity-based habit formation frameworks</li>
+        <li>Reflective cognitive journalling systems</li>
+      </ul>
+    </div>
+    <div class="program-card reveal reveal-delay-2">
+      <div class="program-badge">Organisations</div>
+      <h3>Corporate Edition</h3>
+      <div class="program-audience">Leadership Performance Reset</div>
+      <p class="program-desc">A 90-minute activity-based workshop for professionals and leadership teams dealing with cognitive overload, meeting fatigue, and the unsustainable demands of always-on digital work culture.</p>
+      <ul class="program-features">
+        <li>Cognitive overload mechanics & attention fragmentation</li>
+        <li>Burnout cycles — recognition & recovery protocols</li>
+        <li>Boundary design & sustainable energy management</li>
+        <li>Team-level focus culture development</li>
+        <li>Performance sustainability over career arc</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- AUDIENCE SPLIT -->
+<section id="audience">
+  <div class="audience-split">
+    <div class="audience-panel schools reveal">
+      <div class="section-label">For Schools</div>
+      <h2>Transform<br>Your Classrooms</h2>
+      <p>Focus Forward integrates seamlessly into the school calendar without adding to teacher workload. The curriculum is structured, measurable, and built to produce visible change within four weeks.</p>
+      <ul class="audience-list">
+        <li>Improved classroom engagement and on-task behaviour</li>
+        <li>Measurable reduction in behavioural disruptions</li>
+        <li>Higher information retention across subjects</li>
+        <li>Objective attention metrics for school leadership</li>
+        <li>Scalable from individual classrooms to whole-school rollout</li>
+      </ul>
+      <div class="audience-bg">S</div>
+    </div>
+    <div class="audience-panel reveal">
+      <div class="section-label">For Parents</div>
+      <h2>Raise a<br>Focused Mind</h2>
+      <p>The home environment is where attention habits are formed and broken. Focus Forward's home protocol gives parents concrete, science-backed tools — not vague advice — to support their children's cognitive development.</p>
+      <ul class="audience-list">
+        <li>Structured home routines to reduce screen dependence</li>
+        <li>Practical frameworks for building study stamina</li>
+        <li>Emotional regulation strategies for high-pressure moments</li>
+        <li>Age-specific digital boundary design</li>
+        <li>Confidence rebuilding after academic setbacks</li>
+      </ul>
+      <div class="audience-bg">P</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label reveal">04 — The Founder</div>
+  <h2 class="section-title reveal">Built from experience,<br>not <em>theory.</em></h2>
+  <div class="about-layout">
+    <div class="about-body reveal">
+      <p><strong>Focus Forward™ was created as a direct response to a growing and largely unaddressed attention crisis.</strong> It is not a motivational programme or a wellbeing initiative. It is a structured cognitive training framework — designed to produce measurable, durable change in how people direct, sustain, and recover their attention.</p>
+      <p>The programme was designed and developed by <strong>Dr. Sunil Bandi, MBBS (JIPMER)</strong>, with over 20 years of professional experience spanning medicine, behavioural science, and enterprise technology. His final five years at TCS involved deep engagement with how humans interact with complex digital environments, workflow systems, and the cognitive demands of sustained professional focus.</p>
+      <p>This professional trajectory — from clinical medicine to cognitive performance in enterprise technology — produced a uniquely practical perspective. The Focus Forward framework was not developed in an academic vacuum. It emerged from observing attention fatigue in real organisations, real classrooms, and real lives.</p>
+      <p>The approach combines neuroscience education, behavioural conditioning principles, and practical habit architecture. Rather than therapy or counselling, the model emphasises <strong>preventive mental discipline</strong> — building the internal systems that make high performance reliable rather than occasional.</p>
+      <p>The goal: a sustainable cognitive operating system, built from adolescence, that scales through education and into professional life.</p>
+    </div>
+    <div class="about-sidebar reveal reveal-delay-1">
+      <div class="credential">
+        <div class="credential-label">Qualification</div>
+        <div class="credential-val">MBBS — JIPMER (Jawaharlal Institute of Postgraduate Medical Education & Research)</div>
+      </div>
+      <div class="credential">
+        <div class="credential-label">Domain</div>
+        <div class="credential-val">Behavioural & Cognitive Performance</div>
+      </div>
+      <div class="credential">
+        <div class="credential-label">Background</div>
+        <div class="credential-val">20+ years across medicine, cognitive science, and enterprise technology (TCS)</div>
+      </div>
+      <div class="credential">
+        <div class="credential-label">Specialisation</div>
+        <div class="credential-val">Preventive mental discipline, attention systems, habit architecture</div>
+      </div>
+      <div class="credential">
+        <div class="credential-label">Approach</div>
+        <div class="credential-val">Neuroscience education + behavioural conditioning + practical habit engineering</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-label reveal">05 — Get Started</div>
+  <h2 class="section-title reveal">Ready to run a <em>pilot</em> at your institution?</h2>
+  <div class="contact-layout">
+    <div class="contact-intro reveal">
+      <p>Whether you represent a school, university, or corporate team, we begin every engagement with a customised pilot. Tell us about your institution and your specific challenges — we'll design a rollout that fits your context, timeline, and goals.</p>
+      <p>Pilot programmes are available for schools (minimum one class cohort), universities (faculty or student-body focus), and corporate teams (minimum 15 participants). All pilots include a structured pre/post assessment to measure impact.</p>
+      <p style="margin-top:32px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold);">Typical response time: 24–48 hours</p>
+    </div>
+    <form id="pilotForm" class="reveal reveal-delay-1">
+      <div class="form-row">
+        <div>
+          <label for="name">Your Name</label>
+          <input type="text" id="name" placeholder="Dr. / Mr. / Ms." required />
+        </div>
+        <div>
+          <label for="role">Your Role</label>
+          <input type="text" id="role" placeholder="Principal, HR Director..." required />
+        </div>
+      </div>
+      <div>
+        <label for="org">Institution / Organisation</label>
+        <input type="text" id="org" placeholder="School / University / Company name" required />
+      </div>
+      <div>
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="name@institution.edu" required />
+      </div>
+      <div>
+        <label for="program">Programme of Interest</label>
+        <select id="program">
+          <option value="">Select a programme...</option>
+          <option>School Edition (Grades 6–12)</option>
+          <option>Higher Education Edition</option>
+          <option>Corporate Edition</option>
+          <option>Multiple / Unsure</option>
+        </select>
+      </div>
+      <div>
+        <label for="message">Tell us about your context</label>
+        <textarea id="message" placeholder="Describe your institution, the challenges you're seeing, and your goals..."></textarea>
+      </div>
+      <button type="submit" class="form-submit">Request a Pilot Programme →</button>
+      <div class="form-success" id="formSuccess">✓ Request received. We'll be in touch within 48 hours.</div>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Focus Forward™</div>
+  <ul class="footer-links">
+    <li><a href="#problem">The Problem</a></li>
+    <li><a href="#solution">Method</a></li>
+    <li><a href="#programs">Programmes</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 Focus Forward™. All rights reserved.</div>
+</footer>
+
+<script>
+  // CURSOR
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+  document.querySelectorAll('a, button, input, select, textarea').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.width = '20px'; cursor.style.height = '20px'; cursor.style.background = 'var(--gold-light)'; });
+    el.addEventListener('mouseleave', () => { cursor.style.width = '10px'; cursor.style.height = '10px'; cursor.style.background = 'var(--gold)'; });
+  });
+
+  // NAV SCROLL
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // SCROLL REVEAL
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+
+  // FORM
+  document.getElementById('pilotForm').addEventListener('submit', e => {
+    e.preventDefault();
+    document.getElementById('formSuccess').style.display = 'block';
+    e.target.querySelector('.form-submit').style.opacity = '0.4';
+    e.target.querySelector('.form-submit').disabled = true;
+  });
+</script>
+</body>
+</html>
